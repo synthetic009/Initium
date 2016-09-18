@@ -3,10 +3,61 @@
 #import selenium DLLs
 cd "C:\"
 
-Add-Type -Path "C:\SeleniumDotNet\net40\Selenium.WebDriverBackedSelenium.dll"
-Add-Type -Path "C:\SeleniumDotNet\net40\ThoughtWorks.Selenium.Core.dll"
-Add-Type -Path "C:\SeleniumDotNet\net40\WebDriver.dll"
-Add-Type -Path "C:\SeleniumDotNet\net40\WebDriver.Support.dll"
+if (test-path "C:\INI\PS\EvaluateAction.ps1")
+{
+    write-host "Importing Pathing logic..."
+    . C:\INI\ps\EvaluateAction.ps1
+}
+else
+{
+    write-host "Pathing logic script not found! Missing: EvaluateAction.ps1"
+    break;
+}
+
+if (test-path "C:\SeleniumDotNet\net40\Selenium.WebDriverBackedSelenium.dll")
+{
+    write-host "Importing Selenium library..."
+    Add-Type -Path "C:\SeleniumDotNet\net40\Selenium.WebDriverBackedSelenium.dll"
+}
+else
+{
+    write-host "Selenium libarary not found! Missing: Selenium.WebDriverBackedSelenium.dll"
+    break;
+}
+
+if (test-path "C:\SeleniumDotNet\net40\ThoughtWorks.Selenium.Core.dll")
+{
+    write-host "Importing Selenium library..."
+    Add-Type -Path "C:\SeleniumDotNet\net40\ThoughtWorks.Selenium.Core.dll"
+}
+else
+{
+    write-host "Selenium libarary not found! Missing: ThoughtWorks.Selenium.Core.dll"
+    break;
+}
+
+if (test-path "C:\SeleniumDotNet\net40\WebDriver.dll")
+{
+    write-host "Importing Selenium library..."
+    Add-Type -Path "C:\SeleniumDotNet\net40\WebDriver.dll"
+}
+else
+{
+    write-host "Selenium libarary not found! Missing: WebDriver.dll"
+    break;
+}
+
+if (test-path "C:\SeleniumDotNet\net40\WebDriver.Support.dll")
+{
+    write-host "Importing Selenium library..."
+    Add-Type -Path "C:\SeleniumDotNet\net40\WebDriver.Support.dll"
+}
+else
+{
+    write-host "Selenium libarary not found! Missing: WebDriver.Support.dll"
+    break;
+}
+
 
 $driver = New-Object OpenQA.Selenium.Chrome.ChromeDriver
 $wait = New-TimeSpan -Seconds 10
@@ -361,78 +412,109 @@ function GetStats
 
 function GetMyEquip
 {
-    if ($InActiveCombat -eq $false)
+    $statsArray = @();
+    $myEquipArray = @();
+
+    $OpenStats = $driver.FindElementByClassName("avatar-equip-backing").Click()
+    ping localhost -n 2 | Out-Null
+    $myItems = $driver.FindElementsByClassName("main-item")
+    write-host "My equipment is on screen."
+    write-host "Number of items in Inventory:"$myItems.count
+    #write-host "Item #0:" $myItems[0].Text
+    
+    for ($i=0; $i -lt $myItems.count; $i++)
     {
-	    $driver.Keyboard.SendKeys("I");
-	    (Ping loopback -n 5) | Out-Null
-	    If ($driver.FindElementsById("equipment").Displayed)
+        if ($myItems[$i].text -like "*Helm*")
         {
-            $myEquipArray = @();
-            write-host "My equipment is on screen."
-            $myItems = $driver.FindElementsByClassName("main-item")
-            write-host "Number of items in Inventory:"$myItems.count
-            #write-host "Item #0:" $myItems[0].Text
-            
-            $myHelmet = $myItems[0].text
-            $myEquipArray += $myHelmet
-            #write-host "Item0:" $myHelmet
-
-            $myChest = $myItems[1].text
-            $myEquipArray += $myChest
-            #write-host "Item1:" $myChest
-
-            $myShirt = $myItems[2].text
-            $myEquipArray += $myShirt
-            #write-host "Item2:" $myShirt
-
-            $myGloves = $myItems[3].text
-            $myEquipArray += $myGloves
-
-
-            $myLegs = $myitems[4].text
-            $myEquipArray += $myLegs
-            #write-host "Item4:" $myLegs
-
-            $myBoots = $myItems[5].text
-            $myEquipArray += $myBoots
-            #write-host "Item5:" $myBoots
-
-            $myRightHand = $myItems[6].text
-            $myEquipArray += $myRightHand
-            #write-host "Item6:" $myRightHand
-
-            $myLeftHand = $myItems[7].text
-            $myEquipArray += $myLeftHand
-            #write-host "Item7:" $myLeftHand
-
-            
-            $myRightRing = $myItems[8].text
-            $myEquipArray += $myRightRing
-            #write-host "Item8:" $myRightRing
-
-            $myLeftRRing = $myItems[9].Text
-            $myEquipArray += $myLeftRRing
-            #write-host "Item9:" $myLeftRRing
-
-
-            $myNeck = $myItems[10].text
-            $myEquipArray += $myNeck
-            #write-host "Item10:" $myNeck
-
-            #doesn't work
-            write-host "Closing Inventory."
-            #$driver.Keyboard.SendKeys("I");
-            $CloseInventory = $driver.FindElementByClassName("page-popup-X").Click()
-            ping localhost -n 3 | Out-Null
-            write-host "Exit getEquip."
-            return $myEquipArray
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
         }
-        else 
+        if ($myItems[$i].text -like "*Chest*")
         {
-            $driver.Keyboard.SendKeys("I");
-            write-host "Unable to open inventory."
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*Shirt*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*Gloves*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*Legs*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*Boots*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*RightHand*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*LeftHand*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*RightRing*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*LeftRing*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
+        }
+        if ($myItems[$i].text -like "*Neck*")
+        {
+            $myEquipArray += $myItems[$i].Text
+            write-host "Added "$myItems[$i].Text "to EqipArray" 
         }
     }
+      
+        
+        
+    $GetStr = $driver.FindElementByName("strength")
+    $MyStr = $GetStr[0].Text
+    #write-host "MyStr:" $MyStr
+    $SplitStr = $MyStr.Split(" ")
+    #write-host "SplitStr0:"$SplitStr[0]
+    #write-host "SplitStr1:"$SplitStr[1]
+    $statsArray += $SplitStr[0]
+  
+
+    $GetDex = $driver.FindElementByName("dexterity")
+    $MyDex = $GetDex[0].Text
+    $SplitDex = $MyDex.Split(" ")
+    $statsArray += $SplitDex[0]
+
+
+    $GetInt = $driver.FindElementByName("intelligence")
+    $MyInt = $GetInt[0].Text
+    $SplitInt = $MyInt.Split(" ")
+    $statsArray += $SplitInt[0]
+    #write-host "Real Int:" $RealInt
+
+    $GetInventoryWeight = $driver.FindElementByName("inventoryWeight")
+    $MyWeightPercent = (($GetInventoryWeight[0].Text).Split('(%')[1])
+    $statsArray += $MyWeightPercent 
+    #Write-Host "My Inventory Weight:" $MyWeightPercent
+
+    #start-sleep 1;
+    #close window
+    $OpenStats = $driver.FindElementByClassName("avatar-equip-backing").Click()
+    write-host "Exit getStats."
+    #return $statsArray
+    return $myEquipArray
 }
 
 function GetNearbyItems
@@ -680,733 +762,7 @@ function EvaluateEnemy()
     return $return
 }
 
-##### Navagation Logic ####
-function EvaluateAction()
-{
-    param(
-        [string]$MyLocation,
-        [int]$MyMode,
-        [int]$MyStatus,
-        [int]$routeComplete
-    )
-    #cl = currentLocation
-    #m = Mode
-        #[int]$FarmT = 0;
-        #[int]$LazyWatch = 1;
-        #[int]$SnipeItem = 2;
-    #d = Danger Level
-    write-host "Current Location:" $MyLocation
-    write-host "Current Mode:" $MyMode
-    write-host "Current Status:" $MyStatus
-
-    #check to see if I'm in combat regardless of location
-
-    if ($MyLocation -eq "Aera")
-    {
-        write-host "I'm in Aera"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
-            elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
-            elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
-        }
-        #define other modes here as if
-    }
-    elseif ($MyLocation -eq "Aera Inn")
-    {
-        write-host "I'm in Aera Inn"
-        if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Leave the Inn"}
-            elseif ($MyStatus -eq $Hurt){$return = "Rest"}
-            else {$return = "ERROR1"}
-        }
-
-    }
-    elseif ($MyLocation -eq "North West Hills")
-    {
-        write-host "I'm in North West Hills"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Aera"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Canyonside Plains")
-    {
-        write-host "I'm in Canyonside Plains"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Cricketon Cave Entrance")
-    {
-        write-host "I'm at Cricketon Cave Entrance"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "The Fork")
-    {
-        write-host "I'm in The Fork"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = "Head towards High Road"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Spider Cave Cavern")
-    {
-        write-host "I'm in Spider Cave Cavern"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road")
-    {
-        write-host "I'm in High Road"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}T
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete)
-            {
-                ##START ROUTE AGAIN
-                write-host "Made it back to starting position, starting reouteComplete to 0"
-                $global:routeComplete = $Incomplete
-                $return = "Head towards High Road: Swampland"
-            }
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road: Swampland")
-    {
-        write-host "High Road: Swampland"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Dense Forest"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Dense Jungle")
-    {
-        write-host "I'm in Dense Jungle"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
-        }
-    }
-    ### coninue here
-    elseif ($MyLocation -eq "High Road: Dense Forest")
-    {
-        write-host "I'm in High Road: Dense Forest"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Swampland"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road: Forest")
-    {
-        write-host "I'm in High Road: Forest"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Dense Forest"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Dense Forest"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Dense Forest"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Dense Forest"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "The Den of a Fallen Beast")
-    {
-        write-host "I'm in The Den of a Fallen Beast"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Forest"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road: Waterfall")
-    {
-        write-host "I'm in High Road: Waterfall"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Forest"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall Clearing"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road: Waterfall Clearing")
-    {
-        write-host "I'm in High Road: Waterfall Clearing"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Waterfall"}
-            elseif ($MyStatus -eq $Good -and $routeComplete -eq $Incomplete)
-            {
-                ##you've completed your're route!, now go back to the start
-                write-host "Route Complete, setting status to 1"
-                $global:routeComplete = $Complete;
-                write-host "Current route status:" $routeComplete
-                $return = "Head towards High Road: Waterfall"
-            }
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall"}
-            #removing path to ogres
-            #elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Ogre Pass"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road: Ogre Pass")
-    {
-        write-host "I'm in High Road: Ogre Pass"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall Clearing"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall Clearing"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Waterfall Clearing"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall Clearing"}
-            #removing pathing for ogres
-            #elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest Lookout"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall Clearing"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road: Forest Lookout")
-    {
-        write-host "I'm in High Road: Forest Lookout"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Ogre Pass"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Lake"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){
-             write-host "Go ALL the way back."
-            $return = "Head towards High Road: Ogre Pass"}
-            elseif ($MyStatus -eq $Good){
-            write-host "Still need to complete your route, go to the LAKE."
-            write-host "Current route status:" $routeComplete
-            $return = "Head towards High Road: Lake"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Lake"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "High Road: Lake")
-    {
-        write-host "I'm in High Road: Lake"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Forest Lookout"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Forest Lookout"}
-            elseif ($MyStatus -eq $Good -and $routeComplete -eq 0)
-            {
-                ##you've completed your're route!, now go back to the start
-                write-host "Route Complete, setting status to 1"
-                $global:routeComplete = $Complete;
-                write-host "Current route status:" $routeComplete
-                $return = "Head towards High Road: Forest Lookout"
-            }
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest Lookout"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Volantis River")
-    {
-        write-host "I'm in Volantis River"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards High Road: Lake"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis Countryside"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Lake"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Lake"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis Countryside"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Caves")
-    {
-        write-host "I'm in Troll Caves"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards Volantis River"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Volantis Countryside")
-    {
-        write-host "I'm in Volantis Countryside"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards Volantis River"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis"}
-            else {$return = "ERROR1"}
-        }
-    }
-    ######## MAIN CITY 2 #########
-    elseif ($MyLocation -eq "Volantis")
-    {
-        write-host "I'm in Volantis"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Volantis Countryside"}
-            elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards Volantis Countryside"}
-            elseif ($MyStatus -eq $Good){$return = "Head towards Volantis Countryside"}
-            elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Volantis Inn")
-    {
-        write-host "I'm in Volantis"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Leave the Inn"}
-            elseif ($MyStatus -eq $Hurt){$return = "Rest"}
-            else {$return = "ERROR1"}
-        }
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Leave the Inn"}
-            elseif ($MyStatus -eq $Good){$return = "Leave the Inn"}
-            elseif ($MyStatus -eq $Hurt){$return = "Rest"}
-            else {$return = "ERROR1"}
-        }
-    }
-    ####### continue here
-    elseif ($MyLocation -eq "Artius River")
-    {
-        write-host "I'm in Artius River"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Aera"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Wildeburn Forest")
-    {
-        write-host "I'm in Wildeburn Forest"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Giant Turtle")
-    {
-        write-host "I'm in Giant Turtle"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Aera"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Northern Hills")
-    {
-        write-host "I'm in Northern Hills"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Aera Countryside")
-    {
-        write-host "I'm in Aera Countryside"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Troll Camp"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
-        }
-    }
-
-    elseif ($MyLocation -eq "Aera Swamplands")
-    {
-        write-host "I'm in Aera Swamplands"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Camp")
-    {
-        write-host "I'm in Troll Camp"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "Head towards Troll Cave Entrance"
-            }
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Cave Entrance")
-    {
-        write-host "I'm in Troll Cave Entrance"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = "*6374789917704192*"} #Enter the cave
-            elseif ($MyStatus -eq $Hurt){$return = "Head towards Troll Camp"}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Cave")
-    {
-        write-host "I'm in Troll Cave"
-        if ($MyMode -eq $FarmT)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good){$return = @("*6233658491928576*",
-                    "*6355368402747392*",
-                    "*5620413599055872*",
-                    "*4523847580647424*"                    
-                    "*4838459706441728*"
-                    )
-            } #Go Deeper            
-            elseif ($MyStatus -eq $Hurt){$return = @("*6233658491928576*",
-                    "*6355368402747392*",
-                    "*5620413599055872*",
-                    "*4838459706441728*"                    
-                    )
-            } #Head towards Troll Cave Entrance
-            else {$return = "ERROR1"}
-        }
-        #TO DO
-        if ($MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good){$return = ""}
-            elseif ($MyStatus -eq $Hurt){$return = ""}
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Dig")
-    {
-        write-host "I'm in Troll Dig"
-        if ($MyMode -eq $FarmT)
-        {
-            if ($MyStatus -eq $Good){$return = @("*6258959808724992*",
-                    "*6752386589655040*",
-                    "*6245366304342016*",
-                    "*5286275343974400*",
-                    "*6442102582935552*",
-                    "*5351800237457408*"                    
-                    )
-            }
-            elseif ($MyStatus -eq $Hurt){$return = @("*4523847580647424*",
-                    "*6009402344603648*",
-                    "*6258959808724992*",
-                    "*5286275343974400*",
-                    "*6442102582935552*",
-                    "*6245366304342016*"
-                    )
-            }
-            else{$return = "ERROR1"}
-        }
-
-    }
-    elseif ($MyLocation -eq "Troll Dig: Planning Room")
-    {
-        write-host "I'm in" $MyLocation
-        if ($MyMode -eq $FarmT)
-        {
-            if ($MyStatus -eq $Good){$return = @("*6009402344603648*")}
-            elseif ($MyStatus -eq $Hurt){$return = @("*6752386589655040*",
-                            "*6009402344603648*"
-                            )
-            }
-            else{$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Dig: Guard Station")
-    {
-        write-host "I'm in" $MyLocation
-        if ($MyMode -eq $FarmT)
-        {
-            if ($MyStatus -eq $Good){$return = @("*4631695216082944*")}
-            elseif ($MyStatus -eq $Hurt){$return = @("*4631695216082944*",
-                            "*6442102582935552*"
-                            )
-            }
-            else{$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Keep Entryway")
-    {
-        write-host "I'm in" $MyLocation
-        if ($MyMode -eq $FarmT)
-        {
-            if ($MyStatus -eq $Good){$return = @("*6204342655778816*")}
-            elseif ($MyStatus -eq $Hurt){$return = @("*5351800237457408*")}
-            else{$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Keep Hub")
-    {
-        write-host "I'm in" $MyLocation
-        if ($MyMode -eq $FarmT)
-        {
-            if ($MyStatus -eq $Good){$return = @("*5961972819427328*")}
-            elseif ($MyStatus -eq $Hurt){$return = @("*6204342655778816*")}
-            else{$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -eq "Troll Keep Smithy")
-    {
-        write-host "I'm in" $MyLocation
-        if ($MyMode -eq $FarmT)
-        {
-            if ($MyStatus -eq $Good){$return = @("*5961972819427328*")}
-            elseif ($MyStatus -eq $Hurt){$return = @("*5961972819427328*")}
-            else{$return = "ERROR1"}
-        }
-    }
-
-    elseif ($MyLocation -like "*Camp:*")
-    {
-        write-host "I'm inside a campsite!"
-        if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn)
-        {
-            write-host "I'm Farming Trolls"
-            if ($MyStatus -eq $Good) {$return = "Leave camp"}
-            elseif ($MyStatus -eq $Hurt){$return = "Rest"}
-            ##add logic here to view campsite viability
-            else {$return = "ERROR1"}
-        }
-    }
-    elseif ($MyLocation -like "*Combat site:*")
-    {
-        write-host "I'm inside a combat site!"
-        if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn)
-        {
-            write-host "I'm Farming Trolls"
-            ##evaluate enemy
-            $EnemyState = EvaluateEnemy
-            if ($EnemyState -eq "Alive")
-            {
-                write-host "There is an Enemy on Screen, getting new destination (command)."
-                if ($MyStatus -eq $Good) {$return = "Attack"} #partial text, need eval
-                elseif ($MyStatus -eq $Hurt){$return = "Attack"} 
-                #add logic for third status - Try to run away
-                ##add logic here to deal with which weapon to use
-                else {$return = "ERROR1"}
-            }
-            if ($EnemyState -eq "Dead")
-            {
-                write-host "Looting site..."
-                ###look for loot... then leave
-                LootEnemyItems
-                #$FoundGold = LootEnemyGold
-                #write-host "What I found: "$FoundGold
-                $return = "Leave this site and forget about it"
-            }
-            else
-            {
-                write-host "Unable to determine enemy status. ERROR3"
-                $return = "ERROR2"
-            }
-        }
-    }
-    $EnemyState = EvaluateEnemy
-    if ($EnemyState -eq "Alive")
-    {
-        write-host "There is an Enemy on Screen, getting new destination (command)."
-        if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn)
-        {
-            if ($MyStatus -eq $Good) {$return = "Attack"}
-            elseif ($MyStatus -eq $Hurt){$return = "Attack"}
-            #add logic for third status - Try to run away
-            ##add logic here to deal with which weapon to use
-            else {$return = "ERROR1"}
-        }
-        ##add logic for other modes
-    }
-    elseif ($EnemyState -eq "Dead")
-    {
-        ###don't need to do anything?
-    }
-    else {$return = "ERROR2"}
-
-
-    write-host "Exit EvaluateAction."
-    return $return
-}
+##### Navagation Logic from EvaluateAction.ps1 ####
 
 function doRest()
 {
@@ -1670,8 +1026,8 @@ function checkStatus()
             dologGeneric ("Account: "+$MyAccount+" current MODE: "+$MyMode)
             $MyGold = GetGold
             dologGeneric ("Account: "+$MyAccount+" current GOLD: "+$MyGold)
-            $MyStats = GetStats
-            dologGeneric ("Account: "+$MyAccount+" current STATS: "+$MyStats)
+            #$MyStats = GetStats
+            #dologGeneric ("Account: "+$MyAccount+" current STATS: "+$MyStats)
             write-host "Exit checkStatus."
             return $StandBy
         }
@@ -1683,9 +1039,10 @@ function checkStatus()
 ### Initialize 
 $MyLocation = $Unknown
 #ping localhost -n 1 | out-null
-$MyStats = GetStats
-dologSpecific ("Current Stats: "+$MyStats)
-write-host "My Stats:" $MyStats
+#skipping for now
+#$MyStats = GetStats
+#dologSpecific ("Current Stats: "+$MyStats)
+#write-host "My Stats:" $MyStats
     
 
 function Main()
