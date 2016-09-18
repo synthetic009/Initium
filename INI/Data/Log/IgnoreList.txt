@@ -1,0 +1,11 @@
+*Leather Armor*
+*Studded Leather*
+*Leather Boots*
+*Leather Pants*
+*Leather Cap*
+*Leather Gloves*
+*Padded Leather Gloves*
+*Katar*
+*Dagger*
+*Forked Dagger*
+GreatClub*
