@@ -243,7 +243,6 @@ function dologGeneric()
     Add-Content $GenericLogFile ($MyAccount+"/"+$dateforlog+$tolog)
 }
 
-
 function doDropItem
 {
     param($Equipment)
@@ -414,107 +413,114 @@ function GetMyEquip
 {
     $statsArray = @();
     $myEquipArray = @();
-
-    $OpenStats = $driver.FindElementByClassName("avatar-equip-backing").Click()
-    ping localhost -n 2 | Out-Null
-    $myItems = $driver.FindElementsByClassName("main-item")
-    write-host "My equipment is on screen."
-    write-host "Number of items in Inventory:"$myItems.count
-    #write-host "Item #0:" $myItems[0].Text
-    
-    for ($i=0; $i -lt $myItems.count; $i++)
+    try
     {
-        if ($myItems[$i].text -like "*Helm*")
+        $OpenStats = $driver.FindElementByClassName("avatar-equip-backing").Click()
+        ping localhost -n 2 | Out-Null
+        $myItems = $driver.FindElementsByClassName("main-item")
+        write-host "My equipment is on screen."
+        write-host "Number of items in Inventory:"$myItems.count
+        #write-host "Item #0:" $myItems[0].Text
+    
+        for ($i=0; $i -lt $myItems.count; $i++)
         {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
+            if ($myItems[$i].text -like "*Helm*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*Chest*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*Shirt*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*Gloves*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*Legs*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*Boots*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*RightHand*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*LeftHand*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*RightRing*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*LeftRing*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
+            if ($myItems[$i].text -like "*Neck*")
+            {
+                $myEquipArray += $myItems[$i].Text
+                write-host "Added "$myItems[$i].Text "to EqipArray" 
+            }
         }
-        if ($myItems[$i].text -like "*Chest*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*Shirt*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*Gloves*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*Legs*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*Boots*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*RightHand*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*LeftHand*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*RightRing*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*LeftRing*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-        if ($myItems[$i].text -like "*Neck*")
-        {
-            $myEquipArray += $myItems[$i].Text
-            write-host "Added "$myItems[$i].Text "to EqipArray" 
-        }
-    }
       
         
         
-    $GetStr = $driver.FindElementByName("strength")
-    $MyStr = $GetStr[0].Text
-    #write-host "MyStr:" $MyStr
-    $SplitStr = $MyStr.Split(" ")
-    #write-host "SplitStr0:"$SplitStr[0]
-    #write-host "SplitStr1:"$SplitStr[1]
-    $statsArray += $SplitStr[0]
+        $GetStr = $driver.FindElementByName("strength")
+        $MyStr = $GetStr[0].Text
+        #write-host "MyStr:" $MyStr
+        $SplitStr = $MyStr.Split(" ")
+        #write-host "SplitStr0:"$SplitStr[0]
+        #write-host "SplitStr1:"$SplitStr[1]
+        $statsArray += $SplitStr[0]
   
 
-    $GetDex = $driver.FindElementByName("dexterity")
-    $MyDex = $GetDex[0].Text
-    $SplitDex = $MyDex.Split(" ")
-    $statsArray += $SplitDex[0]
+        $GetDex = $driver.FindElementByName("dexterity")
+        $MyDex = $GetDex[0].Text
+        $SplitDex = $MyDex.Split(" ")
+        $statsArray += $SplitDex[0]
 
 
-    $GetInt = $driver.FindElementByName("intelligence")
-    $MyInt = $GetInt[0].Text
-    $SplitInt = $MyInt.Split(" ")
-    $statsArray += $SplitInt[0]
-    #write-host "Real Int:" $RealInt
+        $GetInt = $driver.FindElementByName("intelligence")
+        $MyInt = $GetInt[0].Text
+        $SplitInt = $MyInt.Split(" ")
+        $statsArray += $SplitInt[0]
+        #write-host "Real Int:" $RealInt
 
-    $GetInventoryWeight = $driver.FindElementByName("inventoryWeight")
-    $MyWeightPercent = (($GetInventoryWeight[0].Text).Split('(%')[1])
-    $statsArray += $MyWeightPercent 
-    #Write-Host "My Inventory Weight:" $MyWeightPercent
+        $GetInventoryWeight = $driver.FindElementByName("inventoryWeight")
+        $MyWeightPercent = (($GetInventoryWeight[0].Text).Split('(%')[1])
+        $statsArray += $MyWeightPercent 
+        #Write-Host "My Inventory Weight:" $MyWeightPercent
 
-    #start-sleep 1;
-    #close window
-    $OpenStats = $driver.FindElementByClassName("avatar-equip-backing").Click()
-    write-host "Exit getStats."
-    #return $statsArray
-    return $myEquipArray
+        #start-sleep 1;
+        #close window
+        $OpenStats = $driver.FindElementByClassName("avatar-equip-backing").Click()
+        write-host "Exit getStats."
+        #return $statsArray
+        return $myEquipArray
+    }
+    catch
+    {
+        write-host "Unable to get character equipment."
+        return "ERROR"
+    }
 }
 
 function GetNearbyItems
@@ -606,28 +612,37 @@ function EvaluateLootByIgnorelist()
 
 function doPickList()
 {
-    $loot = EvaluateLootByIgnorelist
-
-    if ($loot.count -gt 0)
+    try
     {
-        write-host "Looting items found not inside IgnoreList"
-        doItemCollect $loot
-        while ($loot.count -gt 0)
-        {
-            write-host "Attempting to loot a desired item."
-            $loot = EvaluateLootByIgnorelist
-            if ($loot.count -eq 0 -or $loot -eq $NULL)
-            {
-                write-host "All desired items have been looted."
-                break;
-            }
-            else
-            {
-                write-host "Current number of items need collecting: " $loot.count
-                doItemCollect $loot
-            }
-        }
+        $loot = EvaluateLootByIgnorelist
 
+        if ($loot.count -gt 0)
+        {
+            write-host "Looting items found not inside IgnoreList"
+            doItemCollect $loot
+            while ($loot.count -gt 0)
+            {
+                write-host "Attempting to loot a desired item."
+                $loot = EvaluateLootByIgnorelist
+                if ($loot.count -eq 0 -or $loot -eq $NULL)
+                {
+                    write-host "All desired items have been looted."
+                    break;
+                }
+                else
+                {
+                    write-host "Current number of items need collecting: " $loot.count
+                    doItemCollect $loot
+                }
+            }
+
+        }
+    }
+    catch
+    {
+        write-host "Unable to get list of items."
+        isPopupDisplayed
+        break;
     }
 }
 
@@ -1036,6 +1051,38 @@ function checkStatus()
     $MyStatus = $Unknown}
 }
 
+function isPopupDisplayed()
+{
+    try
+    {
+        #$myPopUp = $driver.FindElementsByClassName("popup")
+        if ($displayedPopup = $driver.FindElementsById("popup_footer_okay_1").Displayed)
+        {
+            write-host "Found Popup Messaged displayed. Finding close function..."
+            $PopUp = $driver.FindElementsByClassName("popup_message_okay")
+            write-host "PopUp var:" $PopUp.text
+            $onClick = $PopUp.GetAttribute('onclick')
+            write-host "onclick:" $onClick
+            foreach ($item in $PopUp)
+            {
+                write-host "Found item:" $item
+                $closePopup = $item.GetAttribute('onclick')
+                if ($closePopup -eq "closepopupMessage(1)")
+                {
+                    write-host "Found close function, executing..."
+                    $item.Click()
+                    ping loopback -n 2 | Out-Null
+                    write-host "Exit isPopupDisplayed"
+                }
+            }
+        }
+    }
+    catch
+    {
+        write-host "Could not find popup"
+    }
+}
+
 ### Initialize 
 $MyLocation = $Unknown
 #ping localhost -n 1 | out-null
@@ -1098,6 +1145,12 @@ function Main()
             {
                 #every 10 ticks on our status counter and we check the status of our gear and items
                 $MyEquip = GetMyEquip
+                if ($MyEquip -eq "ERROR")
+                {
+                    write-host "Unable to check gear, seeing if there's a popup blocking us."
+                    isPopupDisplayed
+                    main
+                }
                 write-host "My Equipped Items..."
                 $amiEquipped = simpleEvaluateEquip $MyEquip
                 $MyStatus = checkStatus $amiEquipped
@@ -1137,7 +1190,8 @@ function Main()
                 $Destination = EvaluateAction $MyLocation $MyMode $MyStatus $global:routeComplete
                 if ($Destination -like "*ERROR*")
                 {
-                    write-host "Caught error in GetDestination, change status to standby, goto main"
+                    write-host "Caught error in GetDestination, checking popups then change status to standby, goto main"
+                    isPopupDisplayed
                     dologGeneric ("Account: "+$MyAccount+" Caught error in GetDestination, change status to standby.")
                     $MyStatus = $unkown
                     main
@@ -1163,7 +1217,8 @@ function Main()
                 $Destination = EvaluateAction $MyLocation $MyMode $MyStatus $global:routeComplete
                 if ($Destination -like "*ERROR*")
                 {
-                    write-host "Caught error in GetDestination, change status to standby, goto main"
+                    write-host "Caught error in GetDestination, checking popups then change status to standby, goto main"
+                    isPopupDisplayed
                     dologGeneric ("Account: "+$MyAccount+" Caught error in GetDestination, change status to standby.")
                     $MyStatus = $unknown
                     main
@@ -1191,7 +1246,8 @@ function Main()
                 $Destination = EvaluateAction $MyLocation $MyMode $MyStatus $global:routeComplete
                 if ($Destination -like "*ERROR*")
                 {
-                    write-host "Caught error in GetDestination, change status to standby, goto main"
+                    write-host "Caught error in GetDestination, checking popups then change status to standby, goto main"
+                    isPopupDisplayed
                     dologGeneric ("Account: "+$MyAccount+" Caught error in GetDestination, change status to standby.")
                     #$MyStatus = $Standby
                     main
