@@ -1,4 +1,21 @@
-﻿param($AccountParam, $PasswordParam, $ModeParam)
+﻿param($AccountParam, $PasswordParam, $ModeParam, $LogGroupParam)
+<#
+Current use for Parameters:
+Execute script from Powershell like: C:\ini\ps\Initium-Alpha.ps1 -AccountParam "ACCOUNT1@gmail.com" -PasswordParam "PASSWORD" -ModeParam "20" -LogGroupParam "GROUPNAME"
+Mandatory Param:
+    -AccountParam (Specifies what account you want to run under)
+    -PasswordParam (Specifies password for said account)
+Optional Param:
+    -ModeParam (Species Mode to use, current options:
+        To Farm Trolls, enter: 0
+        [NOT IMPLEMENTED] To observe and log = 1;
+        [NOT IMPLEMENTED] To Pickup items on floor in current zone that match picklist, enter: 2
+        [NOT IMPLEMENTED] To simply sit and do nothing enter: 10
+        To Farm High Road for Thorn (MAKE SURE YOU HAVE PICK LIST ENABLED), enter: 20
+    -LogGroupParam (Enables logging of Group Chat, enter the name of the group you're monitoring, example:
+        "Potato" as a parameter will create a log file in C:\ini\data\log\GroupChat\PotatoGroupChatLog.txt with group chat log.
+#>
+
 
 #import selenium DLLs
 cd "C:\"
@@ -57,7 +74,23 @@ else
     write-host "Selenium libarary not found! Missing: WebDriver.Support.dll"
     break;
 }
-
+#if we entered a param for log group param, enable use of EvalGroupChat function
+if (!([string]::IsNullOrEmpty($LogGroupParam)))
+{
+    write-host "!!!!!!!!!!!!!!!!!!!!!!!!"
+    write-host "Enabling use of EvalGroupChat Function."
+    write-host "!!!!!!!!!!!!!!!!!!!!!!!!"
+    $DefaultGroupChatLogDir = "C:\INI\Data\Log\GroupChat\"
+    $MyGroup = $DefaultGroupChatLogDir+$LogGroupParam+"GroupChatLog.txt"
+    $isEvalGroupChatEnabled = $True
+}
+else
+{
+    write-host "!!!!!!!!!!!!!!!!!!!!!!!!"
+    write-host "Disabling use of EvalGroupChat Function."
+    write-host "!!!!!!!!!!!!!!!!!!!!!!!!"
+    $isEvalGroupChatEnabled = $False
+}
 
 $driver = New-Object OpenQA.Selenium.Chrome.ChromeDriver
 $wait = New-TimeSpan -Seconds 10
@@ -217,6 +250,9 @@ function waitForElement($locator, $timeInSeconds,[switch]$byClass,[switch]$byNam
         return $true
     }
     catch{
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
+        write-host "Timeout trying to wait for element!"
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
         return "Wait for $locator timed out"
     }
 }
@@ -518,7 +554,10 @@ function GetMyEquip
     }
     catch
     {
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
         write-host "Unable to get character equipment."
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
+        
         return "ERROR"
     }
 }
@@ -640,7 +679,9 @@ function doPickList()
     }
     catch
     {
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
         write-host "Unable to get list of items."
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
         isPopupDisplayed
         break;
     }
@@ -756,9 +797,12 @@ function EvaluateEnemy()
     }
     catch
     {
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
         write-host "ERROR: No HP Bars found. What do?"
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
+     
         #figure out what we want to do here
-        $return = "ERROR3"
+        $return = "ERROR"
     }
     
     <#
@@ -845,6 +889,9 @@ function gotoDestination()
         }
         catch
         {
+            write-host "!!!!!!!!!!!!!!!!!!!!!!"
+            write-host "Inside Destination match 0-9, status = hurt"
+            write-host "!!!!!!!!!!!!!!!!!!!!!!"
             #failed
         }
     }
@@ -962,7 +1009,11 @@ function gotoDestination()
             }
         }
         catch
-        {<#
+        {
+            write-host "!!!!!!!!!!!!!!!!!!!!!!"
+            write-host "Inside Evaluating destination by off ID"
+            write-host "!!!!!!!!!!!!!!!!!!!!!!"
+        <#
             $RegularUI = $driver.FindElementsByClassName("main-button")
             
             foreach ($item in $RegularUI)
@@ -1015,7 +1066,10 @@ function gotoDestination()
         }
         Catch
         {
+            write-host "!!!!!!!!!!!!!!!!!!!!!!"
             write-host "Destination not found. Trying to explore"
+            write-host "!!!!!!!!!!!!!!!!!!!!!!"
+            
         
             $driver.Keyboard.SendKeys("W");
             write-host "Waiting 10 seconds..."
@@ -1079,9 +1133,163 @@ function isPopupDisplayed()
     }
     catch
     {
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
         write-host "Could not find popup"
+        write-host "!!!!!!!!!!!!!!!!!!!!!!"
     }
 }
+function EvalGroupChat()
+{
+
+    param($Group)
+
+    write-host "Start of EvalGroupChat function..."
+    write-host "Confirming chat log directories..."
+    if([string]::IsNullOrEmpty($Group)) 
+    {
+        write-host "Group is UNDEFINED, using default location"
+        $Group = "C:\Ini\Data\Log\GroupChat\DefaultGroupChatLog.txt"
+    }
+    if (!(test-path $Group))
+    {
+        write-host "Path does to Group Chat does not exist... creating."
+        try{
+            new-item $Group -ItemType file -Force
+        }
+        Catch{
+            write-host "Unable to create dir:" $Group
+        }
+    }
+    else
+    {
+        write-host "Confirmed directory."
+    }
+
+    $counter = 0
+    $day = (get-date -UFormat %m%d)
+    $dayForLog = "[$day]"
+    write-host "Switching context to Group Chat."
+    $groupChatTab = $driver.FindElementsById("GroupChat_tab")
+    foreach ($thing in $groupChatTab)
+    {
+        $groupChatTab = $thing.GetAttribute('onclick')
+        
+        write-host "onClickSwitchToGroupChat:" $groupChatTab
+        if ($groupChatTab -eq "changeChatTab(`"GroupChat`")")
+        {
+            try{
+                write-host "Group Chat Tab Found, switching."
+                $thing.Click()
+                #ping loopback -n  | Out-Null
+                write-host "Exit Switch to Group Chat."
+                #return $true
+            }
+            catch{
+                write-host "Unable to switch to group chat, writing to event log."
+            }
+        }
+        else
+        {
+            write-host "Could not find expected value of group chat onClick function."
+            #write-host "Expected:" $val
+        }
+    }   
+
+
+    $groupChat = $driver.FindElementsById("chat_messages_GroupChat")
+    write-host "Total Count for groupChat: " $groupChat.count
+    $chatMessageMain = $groupChat[0].FindElementsByClassName("chatMessage-main")
+    write-host "Total Count for groupChatMessages: " $chatMessageMain.count
+    $getFileContent = get-content $Group
+    #for ($i=0; $i -lt $chatMessageMain.count; $i++)
+    for ($i=$chatMessageMain.count; $i -ge 0; $i--)
+    {
+        write-host ""
+        write-host "Eval chat message #:$i" 
+        $chatMessageTime = $chatMessageMain[$i].FindElementsByClassName("chatMessage-time")
+        $chatMessageText = $chatMessageMain[$i].FindElementsByClassName("chatMessage-text") 
+        #write-host "Message info text0:" $chatMessageText[0].text
+        #write-host "Message info text1:" $chatMessageText[1].text
+        $groupChatToEval = $chatMessageText[1].text
+        $time = $chatMessageTime[0].text
+        $groupChatCombined = $dayForLog+ $chatMessageTime[0].text+ $chatMessageText[0].text+$chatMessageText[1].text
+        write-host $groupChatCombined
+
+
+        try{
+            $isInLog = ($getFileContent | Select-String -SimpleMatch $groupChatToEval)
+        }
+        catch{
+            write-host "########################"
+            write-host "Broke trying to find: $groupChatToEval"
+            write-host "########################"
+            continue;
+        }
+        write-host "isInLog value:" $isInLog
+        if([string]::IsNullOrEmpty($isInLog)) 
+        {            
+            Write-Host "Nothing was found in:" $_.FullName "Searching for:" $groupChatToEval
+            $groupChatCombined | Add-Content $Group
+            $counter++            
+        } 
+        else 
+        {
+            #init text counter, if counter not equal number of timestamps collected, we add item to log
+            $textCounter = 0;            
+            #evalute if message was present with different timestamp
+            write-host "Found a match while searching for:" $groupChatToEval    
+            #Write-Host "Method Type for isInLog:" $isInLog.GetType()
+            [System.String[]]$parsed = $isInLog
+            [System.String[]]$parsed = $parsed.Split("][*]")
+            write-host "Parsed isInLog:" $parsed
+            #write-host "Method Type for parsed:" $parsed
+            $tempArray = @()
+            foreach ($item in $parsed)
+            {
+                if ($item -like "*:*" -and $item.Length -le 5)
+                {
+                    Write-Host "Player message timestamp from Log:" $item
+                    $item = $item.Insert(0,"[")
+                    $item = $item+"]"
+                    $tempArray+= $item
+                    write-host "Number of items matching player chat log text:" $tempArray.Count
+                }
+            }
+            #test to see if our temp array matches any instances of timestamps in group chat string 
+            if ($tempArray.Count -gt 0)
+            {
+                write-host "Total number of matching text in logs to test against:" $tempArray.Count
+                for ($a=0; $a -lt $tempArray.Count; $a++)
+                {
+                    write-host "Compare log time entry:" $time
+                    write-host "With player text timestamp:" $tempArray[$a]
+                    if ($tempArray[$a] -eq $chatMessageTime[0].text)
+                    {
+                        write-host "Message matches timestamp of previous dialog"
+                        $textCounter++
+                    }
+                }
+                #if ($textCounter -lt $tempArray.Count)
+                if ($textCounter -gt 0)
+                {
+                    write-host "!!!!!!!!!!!!!!!!!"
+                    write-host "Found duplicate text, disgarding."
+                    write-host "!!!!!!!!!!!!!!!!!"                
+                }
+                else
+                {
+                    write-host "@@@@@@@@@@@@@@@@@"
+                    write-host "Found duplicate text but unique timestamp, adding to log!"
+                    write-host "@@@@@@@@@@@@@@@@@"
+                    $groupChatCombined | Add-Content $Group
+                }  
+            }
+        }
+    }
+    return $counter
+}
+
+
 
 ### Initialize 
 $MyLocation = $Unknown
@@ -1091,13 +1299,17 @@ $MyLocation = $Unknown
 #dologSpecific ("Current Stats: "+$MyStats)
 #write-host "My Stats:" $MyStats
     
+[int]$StatusCounter = 0
+        $MyEquip = GetMyEquip
+        dologSpecific ("My Current Equipment: "+$MyEquip)
+        write-host "My Equipped Items..."
 
 function Main()
 {
     dologSpecific "Script Startup."
     write-host "Initilizing main function..."
 
-    if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn)
+    if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn -or $MyMode -eq $LazyWatch)
     {
         #Initilize
         $MyLocation = GetLocation
@@ -1117,18 +1329,19 @@ function Main()
         dologSpecific ("Target Gold: "+$DesiredGold) 
         write-host "My Gold:" $MyGold
         write-host "Desired Gold:" $DesiredGold
-
+        
+        <#
         $MyEquip = GetMyEquip
         dologSpecific ("My Current Equipment: "+$MyEquip)
         write-host "My Equipped Items..."
+        #>
 
         $amiEquipped = simpleEvaluateEquip $MyEquip
         dologSpecific ("Am I equipped?: "+$amiEquipped)
 
         $MyStatus = checkStatus $amiEquipped
         dologSpecific ("My Current Status: "+$MyStatus)
-        [int]$StatusCounter = 0
-      
+        write-host "Status Counter:" $StatusCounter
         ping localhost -n 3 | Out-Null
 
         while ($MyGold -lt $DesiredGold)
@@ -1140,9 +1353,27 @@ function Main()
             #start-sleep 2;
             $MyLocation = GetLocation
             write-host "Main: End GetLocation."
+            if (($StatusCounter % 10 -eq 0) -and $isEvalGroupChatEnabled -eq $True)
+            {
+                write-host "%%%%%%%%%%%%%%%%%%%%%%%%%"
+                write-host "Logging Group Chat."
+                write-host "%%%%%%%%%%%%%%%%%%%%%%%%%"
+                $newMessages = EvalGroupChat $MyGroup
+                write-host "%%%%%%%%%%%%%%%%%%%%%%%%%"
+                write-host "Added $newMessages new items to group chat."
+                write-host "%%%%%%%%%%%%%%%%%%%%%%%%%"
+            }
+            else
+            {
+                write-host "Status counter not divisable by 10 and/or evalgroupchat is disabled, curret settings:"
+                write-host "Status counter modulus 10:" ($StatusCounter % 10)
+                write-host "isEvalGroupChatEnabled:" $isEvalGroupChatEnabled
+            }
+            
             #check to see if we need to stop farming
             if ($StatusCounter % 10 -eq 0)
             {
+                write-host "Inside normal status check function."
                 #every 10 ticks on our status counter and we check the status of our gear and items
                 $MyEquip = GetMyEquip
                 if ($MyEquip -eq "ERROR")
@@ -1176,6 +1407,14 @@ function Main()
                 }
                 ####DROP ITEM LOGIC ######
                 #>
+            }
+            
+            if ($MyMode -eq $LazyWatch)
+            {
+                "In LazyWatch mode..."
+                write-host "Waiting 10 seconds..."
+                ping localhost -n 10 | Out-Null
+                main
             }
             if ($MyStatus -eq $Standby)
             {

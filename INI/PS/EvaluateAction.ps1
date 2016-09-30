@@ -26,13 +26,13 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
             elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
             elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         #define other modes here as if
     }
@@ -44,7 +44,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Leave the Inn"}
             elseif ($MyStatus -eq $Hurt){$return = "Rest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
 
     }
@@ -56,13 +56,13 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Aera"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Canyonside Plains")
@@ -73,13 +73,13 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Cricketon Cave Entrance")
@@ -90,13 +90,13 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "The Fork")
@@ -107,13 +107,13 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards North West Hills"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = "Head towards High Road"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards North West Hills"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Spider Cave Cavern")
@@ -124,13 +124,13 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road")
@@ -141,7 +141,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards The Fork"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}T
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
@@ -154,7 +154,7 @@
             }
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards The Fork"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road: Swampland")
@@ -165,14 +165,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road"}
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Dense Forest"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Dense Jungle")
@@ -183,13 +183,13 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     ### coninue here
@@ -201,14 +201,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Swampland"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Swampland"}
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Swampland"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road: Forest")
@@ -219,14 +219,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Dense Forest"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Dense Forest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Dense Forest"}
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Dense Forest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "The Den of a Fallen Beast")
@@ -237,14 +237,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Forest"}
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road: Waterfall")
@@ -255,14 +255,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Forest"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Forest"}
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall Clearing"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Forest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road: Waterfall Clearing")
@@ -273,7 +273,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
@@ -290,7 +290,7 @@
             #removing path to ogres
             #elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Ogre Pass"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road: Ogre Pass")
@@ -301,7 +301,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Waterfall Clearing"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall Clearing"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
@@ -310,7 +310,7 @@
             #removing pathing for ogres
             #elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest Lookout"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Waterfall Clearing"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road: Forest Lookout")
@@ -321,7 +321,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Ogre Pass"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Lake"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
@@ -333,7 +333,7 @@
             write-host "Current route status:" $routeComplete
             $return = "Head towards High Road: Lake"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards High Road: Lake"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "High Road: Lake")
@@ -344,7 +344,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Forest Lookout"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
@@ -359,7 +359,7 @@
             }
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Forest Lookout"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Volantis River")
@@ -370,14 +370,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards High Road: Lake"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis Countryside"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards High Road: Lake"}
             elseif ($MyStatus -eq $Good){$return = "Head towards High Road: Lake"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis Countryside"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Caves")
@@ -388,14 +388,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards Volantis River"}
             elseif ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis River"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Volantis Countryside")
@@ -406,14 +406,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards Volantis River"}
             elseif ($MyStatus -eq $Good){$return = "Head towards Volantis River"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Volantis"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     ######## MAIN CITY 2 #########
@@ -425,14 +425,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Volantis Countryside"}
             elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Head towards Volantis Countryside"}
             elseif ($MyStatus -eq $Good){$return = "Head towards Volantis Countryside"}
             elseif ($MyStatus -eq $Hurt){$return = "Go to the Inn"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Volantis Inn")
@@ -443,14 +443,14 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Leave the Inn"}
             elseif ($MyStatus -eq $Hurt){$return = "Rest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good -and $routeComplete -eq $Complete){$return = "Leave the Inn"}
             elseif ($MyStatus -eq $Good){$return = "Leave the Inn"}
             elseif ($MyStatus -eq $Hurt){$return = "Rest"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     ####### continue here
@@ -462,7 +462,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Aera"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Wildeburn Forest")
@@ -473,7 +473,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Giant Turtle")
@@ -484,7 +484,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Aera"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Northern Hills")
@@ -495,7 +495,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Aera Countryside")
@@ -506,7 +506,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Troll Camp"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
 
@@ -518,7 +518,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "Head towards Aera Countryside"}
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Camp")
@@ -530,7 +530,7 @@
             if ($MyStatus -eq $Good){$return = "Head towards Troll Cave Entrance"
             }
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Aera Countryside"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Cave Entrance")
@@ -541,7 +541,7 @@
             write-host "I'm Farming Trolls"
             if ($MyStatus -eq $Good){$return = "*6374789917704192*"} #Enter the cave
             elseif ($MyStatus -eq $Hurt){$return = "Head towards Troll Camp"}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Cave")
@@ -563,14 +563,14 @@
                     "*4838459706441728*"                    
                     )
             } #Head towards Troll Cave Entrance
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         #TO DO
         if ($MyMode -eq $Thorn)
         {
             if ($MyStatus -eq $Good){$return = ""}
             elseif ($MyStatus -eq $Hurt){$return = ""}
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Dig")
@@ -594,7 +594,7 @@
                     "*6245366304342016*"
                     )
             }
-            else{$return = "ERROR1"}
+            else{$return = "ERROR"}
         }
 
     }
@@ -608,7 +608,7 @@
                             "*6009402344603648*"
                             )
             }
-            else{$return = "ERROR1"}
+            else{$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Dig: Guard Station")
@@ -621,7 +621,7 @@
                             "*6442102582935552*"
                             )
             }
-            else{$return = "ERROR1"}
+            else{$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Keep Entryway")
@@ -631,7 +631,7 @@
         {
             if ($MyStatus -eq $Good){$return = @("*6204342655778816*")}
             elseif ($MyStatus -eq $Hurt){$return = @("*5351800237457408*")}
-            else{$return = "ERROR1"}
+            else{$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Keep Hub")
@@ -641,7 +641,7 @@
         {
             if ($MyStatus -eq $Good){$return = @("*5961972819427328*")}
             elseif ($MyStatus -eq $Hurt){$return = @("*6204342655778816*")}
-            else{$return = "ERROR1"}
+            else{$return = "ERROR"}
         }
     }
     elseif ($MyLocation -eq "Troll Keep Smithy")
@@ -651,7 +651,7 @@
         {
             if ($MyStatus -eq $Good){$return = @("*5961972819427328*")}
             elseif ($MyStatus -eq $Hurt){$return = @("*5961972819427328*")}
-            else{$return = "ERROR1"}
+            else{$return = "ERROR"}
         }
     }
 
@@ -664,7 +664,7 @@
             if ($MyStatus -eq $Good) {$return = "Leave camp"}
             elseif ($MyStatus -eq $Hurt){$return = "Rest"}
             ##add logic here to view campsite viability
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
     }
     elseif ($MyLocation -like "*Combat site:*")
@@ -682,7 +682,7 @@
                 elseif ($MyStatus -eq $Hurt){$return = "Attack"} 
                 #add logic for third status - Try to run away
                 ##add logic here to deal with which weapon to use
-                else {$return = "ERROR1"}
+                else {$return = "ERROR"}
             }
             if ($EnemyState -eq "Dead")
             {
@@ -695,8 +695,8 @@
             }
             else
             {
-                write-host "Unable to determine enemy status. ERROR3"
-                $return = "ERROR2"
+                write-host "Unable to determine enemy status. ERROR"
+                $return = "ERROR"
             }
         }
     }
@@ -710,7 +710,7 @@
             elseif ($MyStatus -eq $Hurt){$return = "Attack"}
             #add logic for third status - Try to run away
             ##add logic here to deal with which weapon to use
-            else {$return = "ERROR1"}
+            else {$return = "ERROR"}
         }
         ##add logic for other modes
     }
@@ -718,7 +718,7 @@
     {
         ###don't need to do anything?
     }
-    else {$return = "ERROR2"}
+    else {$return = "ERROR"}
 
 
     write-host "Exit EvaluateAction."
