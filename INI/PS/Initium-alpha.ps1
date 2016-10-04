@@ -8,10 +8,11 @@ Mandatory Param:
 Optional Param:
     -ModeParam (Species Mode to use, current options:
         To Farm Trolls, enter: 0
-        [NOT IMPLEMENTED] To observe and log = 1;
+        To observe and log = 1;
         [NOT IMPLEMENTED] To Pickup items on floor in current zone that match picklist, enter: 2
         [NOT IMPLEMENTED] To simply sit and do nothing enter: 10
         To Farm High Road for Thorn (MAKE SURE YOU HAVE PICK LIST ENABLED), enter: 20
+        To farm Protector of the Plains (Send alert on find, do not attack), enter: 41 or POP
     -LogGroupParam (Enables logging of Group Chat, enter the name of the group you're monitoring, example:
         "Potato" as a parameter will create a log file in C:\ini\data\log\GroupChat\PotatoGroupChatLog.txt with group chat log.
 #>
@@ -124,8 +125,8 @@ else {"Log file exists.. continuing."}
 
 
 ####droplist details:
-$DropPathAccount = $AccountLogPath+"\IgnoreList.txt" 
-$DropPathGen = $LogPath+"IgnoreList.txt"
+$DropPathAccount = $AccountLogPath+"\DropList.txt" 
+$DropPathGen = $LogPath+"DropList.txt"
 
 ####ignorelist details:
 $IgnorePathAccount = $AccountLogPath+"\IgnoreList.txt" 
@@ -153,18 +154,18 @@ else
 #####
 
 #set ignorelist
-write-host "Checking presence of DropList.."
+write-host "Checking presence of IgnoreList (BlackList).."
 if (test-path $IgnorePathAccount)
 {
-    write-host "Found valid DropList in:" $IgnorePathAccount
+    write-host "Found valid IgnoreList in:" $IgnorePathAccount
     $IgnoreList = (Get-Content $IgnorePathAccount)
     Write-Host "Items in DropList:" $IgnoreList
 }
 elseif (test-path $IgnorePathGen)
 {
-    write-host "Found valid DropList in:" $IgnorePathGen
+    write-host "Found valid IgnoreList in:" $IgnorePathGen
     $IgnoreList = (Get-Content $IgnorePathGen)
-    Write-Host "Items in DropList:" $IgnoreList
+    Write-Host "Items in IgnoreList:" $IgnoreList
 }
 else
 {
@@ -195,7 +196,16 @@ if ($ModeParam -eq $NULL)
 else
 {
     write-host "Changing Mode to be equal to:" $ModeParam
-    [int]$MyMode = $ModeParam
+    if ($ModeParam -like "*Troll"){$MyMode = 0}
+    elseif ($ModeParam -like "StandBy" -or $ModeParam -like "LazyWatch"){$MyMode = 1}
+    elseif ($ModeParam -like "Thorn"){$MyMode = 20}
+    elseif ($ModeParam -like "POP"){$MyMode = 41}
+    elseif ($ModeParam -like "POS"){$MyMode = 42}
+    elseif ($ModeParam -like "POJ"){$MyMode = 43}
+    elseif ($ModeParam -like "POM"){$MyMode = 44}
+    elseif ($ModeParam -like "POR"){$MyMode = 45}
+    elseif ($ModeParam -like "POD"){$MyMode = 46}
+    else{[int]$MyMode = $ModeParam}
 }
 
 #### Set Modes 
@@ -207,7 +217,13 @@ else
 [int]$LazyWatch = 1;
 [int]$SnipeItem = 2;
 [int]$StandBy = 10;
-[int]$Thorn = 20
+[int]$Thorn = 20;
+[int]$POP = 41;
+[int]$POS = 42;
+[int]$POJ = 43;
+[int]$POM = 44;
+[int]$POR = 45;
+[int]$POD = 46;
 ###
 #status of route (0 = have not completed full route,
 # 1 = need to go back to start
@@ -222,7 +238,7 @@ $global:routeComplete = 0;
 #
 
 ### MyStatus
-[int]$MyStatus = 0;
+$global:MyStatus = 0;
 ### Avalaiable Status':
 [int]$Unknown = 0;
 [int]$Dead = 1;
@@ -760,27 +776,48 @@ function simpleEvaluateEquip()
         
 }
 
+function getEnemyName()
+{
+    try
+    {
+        $characterDisplayBoxes = $driver.FindElementsByClassName("character-display-box").Text
+        $enemyStats = $characterDisplayBoxes[1]
+        $return = $enemyStats
+    }
+    catch
+    {
+        write-host "Unable to fetch enemy stats from function: getEnemyName()"
+        dologGeneric ("Account: "+$MyAccount+" Unable to fetch enemy stats from function: getEnemyName()")
+    }
+}
+
 function EvaluateEnemy()
 {
     try
     {
+        #$characterDisplayBoxes = $driver.FindElementsByClassName("character-display-box").Text
         $enemyHPBar = $driver.FindElementsById("hitpointsBar").Text
         #.Text
+        #$charCount = $characterDisplayBoxes.count
         $charCount = ($enemyHPBar.ToCharArray() | Where-Object {$_ -eq '/'} | Measure-Object).Count
         #write-host "charCount:"$charcount
         if ($charCount -gt 1)
         {
-            #$hpArray = $enemyHpBar[1].Split("/")
+            $hpArray = $enemyHpBar[1].Split("/")
             #write-host "Enemy HP:" $hpArray
             #write-host "text length:" $enemyHPBar.Length
             #write-host "HPBar0:"$enemyHPBar[0].length
             #write-host "HPBar1:"$enemyHPBar[1].length
+            <#
             if ($enemyHPBar[1] -eq $null)
             {
                 write-host "Null on value 1"
             }
+            #>
             write-host "Enemy is on screen." 
             write-host "Health Bars (ME) (Enemy):" $enemyHPBar
+            write-host "Player Count: $charCount"
+            #write-host "Player Display Boxes: $characterDisplayBoxes" 
             #write-host "count:" $enemyHPBar.count 
             $return = "Alive"
             ###set active combat
@@ -857,20 +894,28 @@ function gotoDestination()
     param(
     $Destination
     )
-    #write-host "Passed Param:" $Destination
+    write-host "Inside goToDestination."
+    write-host "Param Passed:" $Destination
     #write-host "Param Type:" $Destination.GetType()
     #write-host "Param count0:" $Destination[0]
 
     ##Auto rest if possible
-    if ($MyStatus -eq $Hurt)
+    if ($global:MyStatus -eq $Hurt)
     {
+        write-host "Attempting auto-rest; set newstatus = DoRest"
         $NewStatus = DoRest
         if ($NewStatus -eq $true)
         {
+            write-host "Successfully rested!"
             return;
         }
     }
-    if ($Destination -match “[0-9]" -and $MyStatus -eq $Hurt)
+    if ($global:MyStatus -eq "Standby")
+    {
+        write-host "Standing by."
+        return;
+    }
+    if ($Destination -match “[0-9]" -and $global:MyStatus -eq $Hurt)
     {
        Try
         {
@@ -936,7 +981,7 @@ function gotoDestination()
                     if ($onclick -like $path)
                     {
                         write-host "Path is like path:" $onclick
-                        if ($onclick -like "*4838459706441728*" -and $MyStatus -eq $Good -and $item.Text -eq "Go Back")
+                        if ($onclick -like "*4838459706441728*" -and $global:MyStatus -eq $Good -and $item.Text -eq "Go Back")
                         {
                             write-host "Found Exit to Rest area, exiting."
                             $found = 1
@@ -944,7 +989,7 @@ function gotoDestination()
                             write-host "Waiting 10 seconds..."
                             ping localhost -n 10 | Out-Null
                         }
-                        if ($onclick -like "*5961972819427328*" -and $MyStatus -eq $Good -and $item.Text -eq "Go Back" -or $item.Text -eq "Walk Here")
+                        if ($onclick -like "*5961972819427328*" -and $global:MyStatus -eq $Good -and $item.Text -eq "Go Back" -or $item.Text -eq "Walk Here")
                         {
                             write-host "Found Exit to Smithy."
                             $found = 1
@@ -952,7 +997,7 @@ function gotoDestination()
                             write-host "Waiting 10 seconds..."
                             ping localhost -n 10 | Out-Null
                         }
-                        if ($onclick -like "*5351800237457408*" -and $MyStatus -eq $Good -and $item.Text -eq "Venture into Troll Keep")
+                        if ($onclick -like "*5351800237457408*" -and $global:MyStatus -eq $Good -and $item.Text -eq "Venture into Troll Keep")
                         {
                             write-host "Found Troll Keep Secret path, entering."
                             $found = 1
@@ -960,7 +1005,7 @@ function gotoDestination()
                             write-host "Waiting 10 seconds..."
                             ping localhost -n 10 | Out-Null
                         }
-                        if ($onclick -like "*6374789917704192*" -and $MyStatus -eq $Good -and $item.Text -eq "Enter the cave")
+                        if ($onclick -like "*6374789917704192*" -and $global:MyStatus -eq $Good -and $item.Text -eq "Enter the cave")
                         {
                             write-host "Found Troll Cave, entering."
                             $found = 1
@@ -969,7 +1014,7 @@ function gotoDestination()
                             ping localhost -n 10 | Out-Null
                         }
 
-                        if ($item.Text -eq "Go Deeper" -and $MyStatus -eq $Good)
+                        if ($item.Text -eq "Go Deeper" -and $global:MyStatus -eq $Good)
                         {
                             write-host "Found a Path that goes deeper while I'm healthy."
                             $found = 1
@@ -977,7 +1022,7 @@ function gotoDestination()
                             write-host "Waiting 10 seconds..."
                             ping localhost -n 10 | Out-Null
                         }
-                        if ($item.Text -eq "Rest Area" -and $MyStatus -eq $Hurt)
+                        if ($item.Text -eq "Rest Area" -and $global:MyStatus -eq $Hurt)
                         {
                             write-host "Found a Path that goes to a rest area."
                             $found = 1
@@ -985,7 +1030,7 @@ function gotoDestination()
                             write-host "Waiting 10 seconds..."
                             ping localhost -n 10 | Out-Null
                         }
-                        if ($item.Text -eq "Go Back" -and $MyStatus -eq $Hurt)
+                        if ($item.Text -eq "Go Back" -and $global:MyStatus -eq $Hurt)
                         {
                             write-host "Found a Path that goes back while I'm hurt."
                             $found = 1
@@ -1086,10 +1131,10 @@ function checkStatus()
     if ($currentEquip -eq $false)
     {
         #write-host "I'm missing key equipment, changing mode to stand-by."
-        if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn)
+        if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn -or $MyMode -eq $POP)
         {
             write-host "I'm missing key equipment, changing mode to stand-by."
-            $MyStatus = $StandBy
+            $global:MyStatus = $StandBy
             #write to generic log to alert admin
             dologGeneric ("Account: "+$MyAccount+" has been set to Stand-by mode, action needed.")
             dologGeneric ("Account: "+$MyAccount+" current MODE: "+$MyMode)
@@ -1101,8 +1146,12 @@ function checkStatus()
             return $StandBy
         }
     }
-    else {write-host "Exit checkStatus."
-    $MyStatus = $Unknown}
+    else {
+        write-host "    Set Status to default value, unknown: $unknown"
+        write-host "Exit checkStatus."
+        #$global:MyStatus = $unknown
+        return $unknown
+    }
 }
 
 function isPopupDisplayed()
@@ -1112,6 +1161,14 @@ function isPopupDisplayed()
         #$myPopUp = $driver.FindElementsByClassName("popup")
         if ($displayedPopup = $driver.FindElementsById("popup_footer_okay_1").Displayed)
         {
+            write-host "We're inside a pop-up, check if Captcha"
+            try{
+                $captcha = $driver.FindElementById("recaptcha-anchor")
+                $captcha.click()
+                }
+            catch{
+                write-host "Unable to find recaptcha anchor"
+                }
             write-host "Found Popup Messaged displayed. Finding close function..."
             $PopUp = $driver.FindElementsByClassName("popup_message_okay")
             write-host "PopUp var:" $PopUp.text
@@ -1309,7 +1366,7 @@ function Main()
     dologSpecific "Script Startup."
     write-host "Initilizing main function..."
 
-    if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn -or $MyMode -eq $LazyWatch)
+    if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn -or $MyMode -eq $LazyWatch -or $MyMode -eq $POP)
     {
         #Initilize
         $MyLocation = GetLocation
@@ -1339,8 +1396,8 @@ function Main()
         $amiEquipped = simpleEvaluateEquip $MyEquip
         dologSpecific ("Am I equipped?: "+$amiEquipped)
 
-        $MyStatus = checkStatus $amiEquipped
-        dologSpecific ("My Current Status: "+$MyStatus)
+        $global:MyStatus = checkStatus $amiEquipped
+        dologSpecific ("My Current Status: "+$global:MyStatus)
         write-host "Status Counter:" $StatusCounter
         ping localhost -n 3 | Out-Null
 
@@ -1349,11 +1406,33 @@ function Main()
             $StatusCounter++
             write-host ""
             write-host "###### Start of Loop ######"
+            write-host "My Account:" $MyAccount
             ping localhost -n 2 | Out-Null
+
+            [int]$MyHealth = GetEffectiveHealth
+            dologSpecific ("Current Health: "+$MyHealth) 
+            write-host "My Health:" $MyHealth
+
+            [int]$MyGold = GetGold
+            dologSpecific ("Current Gold: "+$MyGold)
+            dologSpecific ("Target Gold: "+$DesiredGold) 
+            write-host "My Gold:" $MyGold
+            write-host "Desired Gold:" $DesiredGold
+
+            if ($global:MyStatus -ne $Good)
+            {
+                write-host "My Status: $global:MyStatus"
+                write-host "Started loop in non-Good, state, re-evaluating."
+                $amiEquipped = simpleEvaluateEquip $MyEquip
+                $global:MyStatus = checkStatus $amiEquipped
+                write-host "My new Status: $global:MyStatus"
+
+            }
+            
             #start-sleep 2;
             $MyLocation = GetLocation
             write-host "Main: End GetLocation."
-            if (($StatusCounter % 10 -eq 0) -and $isEvalGroupChatEnabled -eq $True)
+            if (($StatusCounter % 50 -eq 0) -and $isEvalGroupChatEnabled -eq $True)
             {
                 write-host "%%%%%%%%%%%%%%%%%%%%%%%%%"
                 write-host "Logging Group Chat."
@@ -1380,11 +1459,11 @@ function Main()
                 {
                     write-host "Unable to check gear, seeing if there's a popup blocking us."
                     isPopupDisplayed
-                    main
+                    continue;
                 }
                 write-host "My Equipped Items..."
                 $amiEquipped = simpleEvaluateEquip $MyEquip
-                $MyStatus = checkStatus $amiEquipped
+                $global:MyStatus = checkStatus $amiEquipped
                 #write-host "Checking Weight.."
                 ####DROP ITEM LOGIC ######
                 #DIABLED, functional but slow.
@@ -1414,26 +1493,26 @@ function Main()
                 "In LazyWatch mode..."
                 write-host "Waiting 10 seconds..."
                 ping localhost -n 10 | Out-Null
-                main
+                continue;
             }
-            if ($MyStatus -eq $Standby)
+            if ($global:MyStatus -eq $Standby)
             {
                 "In Standby.. Check items."
             }
-            elseif ($MyHealth -ge 70)
+            elseif ($MyHealth -ge 97)
             {
                 
-                $MyStatus = $Good
+                $global:MyStatus = $Good
                 
                 write-host "Main: Start EvaluateAction."
-                $Destination = EvaluateAction $MyLocation $MyMode $MyStatus $global:routeComplete
+                $Destination = EvaluateAction $MyLocation $MyMode $global:MyStatus $global:routeComplete
                 if ($Destination -like "*ERROR*")
                 {
                     write-host "Caught error in GetDestination, checking popups then change status to standby, goto main"
                     isPopupDisplayed
                     dologGeneric ("Account: "+$MyAccount+" Caught error in GetDestination, change status to standby.")
-                    $MyStatus = $unkown
-                    main
+                    #$global:MyStatus = $unknown
+                    continue;
                 }
                 write-host "Main: End EvaluateAction."
                 write-host "My Destination:"$Destination 
@@ -1448,19 +1527,19 @@ function Main()
                 $MyGold = GetGold
                 write-host "Main: End GetGold."
             }
-            elseif ($MyHealth -ge 30 -and $MyHealth -lt 70)
+            elseif ($MyHealth -ge 40 -and $MyHealth -lt 97)
             {
-                $MyStatus = $Hurt
+                $global:MyStatus = $Hurt
                 write-host "I'm HURT!"
                 write-host "Main: Start EvaluateAction."
-                $Destination = EvaluateAction $MyLocation $MyMode $MyStatus $global:routeComplete
+                $Destination = EvaluateAction $MyLocation $MyMode $global:MyStatus $global:routeComplete
                 if ($Destination -like "*ERROR*")
                 {
                     write-host "Caught error in GetDestination, checking popups then change status to standby, goto main"
                     isPopupDisplayed
                     dologGeneric ("Account: "+$MyAccount+" Caught error in GetDestination, change status to standby.")
-                    $MyStatus = $unknown
-                    main
+                    #$global:MyStatus = $unknown
+                    continue;
                 }
                 
                 write-host "Main: End EvaluateAction."
@@ -1477,19 +1556,19 @@ function Main()
                 write-host "Main: End GetGold."
             }
 
-            elseif ($MyHealth -lt 30)
+            elseif ($MyHealth -lt 40)
             {
-                $MyStatus = $Standby
+                $global:MyStatus = $Standby
                 write-host "Main: Status changed to Standby."
                 write-host "Main: Start EvaluateAction."
-                $Destination = EvaluateAction $MyLocation $MyMode $MyStatus $global:routeComplete
+                $Destination = EvaluateAction $MyLocation $MyMode $global:MyStatus $global:routeComplete
                 if ($Destination -like "*ERROR*")
                 {
                     write-host "Caught error in GetDestination, checking popups then change status to standby, goto main"
                     isPopupDisplayed
                     dologGeneric ("Account: "+$MyAccount+" Caught error in GetDestination, change status to standby.")
-                    #$MyStatus = $Standby
-                    main
+                    #$global:MyStatus = $Standby
+                    continue;
                 }
                 write-host "Main: End EvaluateAction."
                 write-host "My Destination:"$Destination 
@@ -1503,7 +1582,7 @@ function Main()
                 write-host "Main: Start GetGold."
                 $MyGold = GetGold
                 write-host "Main: End GetGold."
-                main
+                continue;
             }
         }
         if ($MyGold -ge $DesiredGold)
