@@ -854,8 +854,9 @@
     }
     ### Need below for areas inside dungeons
     $EnemyState = EvaluateEnemy
-    if ($EnemyState -eq "Alive" -and $MyMode -eq $FarmT -or $MyMode -eq $Thorn)
+    if ($EnemyState -eq "Alive" -and $MyMode -eq $Thorn -or $EnemyState -eq "Alive" -and $MyMode -eq $FarmT)
     {
+        write-host "Enemy State from Special Thorn or FarmT mode is: $EnemyState"
         write-host "There is an Enemy on Screen outside of expected battlearea, getting new destination (command)."
         if ($MyMode -eq $FarmT -or $MyMode -eq $Thorn)
         {
